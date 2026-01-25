@@ -222,11 +222,8 @@ const modifier = (text) => {
         const card = storyCards[i];
         if (!card) continue;
 
-        // Skip system cards and Inner-Self cards
-        if (card.title === "WTG Data" || card.title === "Current Date and Time" ||
-            card.title === "World Time Generator Settings" || card.title === "WTG Cooldowns" ||
-            card.title === "WTG Exclusions" || card.title === "Configure Inner Self" ||
-            card.title === "Configure Auto-Cards" || card.title === "Debug Data" ||
+        // Skip system cards and Inner-Self cards (O(1) Set lookup)
+        if (SYSTEM_CARD_TITLES.has(card.title) ||
             (card.title && card.title.toLowerCase().includes("brain"))) {
           continue;
         }

@@ -641,8 +641,8 @@ const modifier = (text) => {
 
     // Check all storycards for trigger matches in AI response
     storyCards.forEach(card => {
-      // Skip the WTG Data storycard, Current Date and Time card, and WTG Settings card (already handled)
-      if (card.title === "WTG Data" || card.title === "Current Date and Time" || card.title === "World Time Generator Settings") {
+      // Skip system cards (O(1) Set lookup)
+      if (SYSTEM_CARD_TITLES.has(card.title)) {
         return;
       }
 
@@ -743,9 +743,8 @@ const modifier = (text) => {
   if (!enableCharacterCards && !disableGeneratedCardDeletion) {
     // Process all storycards for deprecation based on timestamp validation
     storyCards.forEach(card => {
-      // Skip system cards
-      if (card.title === "WTG Data" || card.title === "Current Date and Time" ||
-          card.title === "World Time Generator Settings" || card.title === "Deleted Characters") {
+      // Skip system cards (O(1) Set lookup)
+      if (SYSTEM_CARD_TITLES.has(card.title) || card.title === "Deleted Characters") {
         return;
       }
 
@@ -824,10 +823,8 @@ const modifier = (text) => {
     for (let i = 0; i < maxExclusionCards; i++) {
       const card = storyCards[i];
       if (!card) continue;
-      // Skip system cards
-      if (card.title === "WTG Data" || card.title === "Current Date and Time" ||
-          card.title === "World Time Generator Settings" || card.title === "WTG Cooldowns" ||
-          card.title === "WTG Exclusions") {
+      // Skip system cards (O(1) Set lookup)
+      if (SYSTEM_CARD_TITLES.has(card.title)) {
         continue;
       }
       // Process [e] marker - removes marker and adds card to exclusions list
