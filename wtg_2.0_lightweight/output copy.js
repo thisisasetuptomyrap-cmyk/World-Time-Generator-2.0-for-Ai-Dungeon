@@ -9,6 +9,15 @@ const modifier = (text) => {
     state.wtgMode = 'lightweight';
   }
 
+  // Initialize date/time state if not present (mirrors input.js initialization)
+  if (state.startingDate === undefined) {
+    state.startingDate = '01/01/1900';
+    state.startingTime = 'Unknown';
+    state.currentDate = '01/01/1900';
+    state.currentTime = 'Unknown';
+    state.settimeInitialized = false;
+  }
+
   let modifiedText = text;
 
   // Check if WTG is disabled entirely
