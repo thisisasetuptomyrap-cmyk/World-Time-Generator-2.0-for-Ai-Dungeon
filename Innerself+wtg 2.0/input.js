@@ -33,7 +33,7 @@ const modifier = (text) => {
         let sleepMinutes = Math.floor(Math.random() * 60);
         let add = {hours: sleepHours, minutes: sleepMinutes};
         state.turnTime = addToTurnTime(state.turnTime, add);
-        const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+        const {currentDate, currentTime} = computeCurrent(state.startingDate || '01/01/1900', state.startingTime || 'Unknown', state.turnTime);
         state.currentDate = currentDate;
         state.currentTime = currentTime;
         let wakeMessage = (add.days > 0 || state.turnTime.days > 0) ? "the next day" : "later that day";
@@ -43,7 +43,7 @@ const modifier = (text) => {
         state.turnTime = {years:0, months:0, days:0, hours:0, minutes:0, seconds:0};
         state.turnTime = addToTurnTime(state.turnTime, {days: 1});
         state.startingTime = "8:00 AM";
-        const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+        const {currentDate, currentTime} = computeCurrent(state.startingDate || '01/01/1900', state.startingTime || 'Unknown', state.turnTime);
         state.currentDate = currentDate;
         state.currentTime = currentTime;
         const ttMarker = formatTurnTime(state.turnTime);

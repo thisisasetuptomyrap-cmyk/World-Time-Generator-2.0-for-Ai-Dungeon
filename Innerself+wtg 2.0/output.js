@@ -133,7 +133,7 @@ const modifier = (text) => {
 
           if (days > 0 || hours > 0 || minutes > 0) {
             state.turnTime = addToTurnTime(state.turnTime, { days, hours, minutes });
-            const { currentDate, currentTime } = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+            const { currentDate, currentTime } = computeCurrent(state.startingDate || '01/01/1900', state.startingTime || 'Unknown', state.turnTime);
             state.currentDate = currentDate;
             state.currentTime = currentTime;
             state.changed = true;
@@ -193,7 +193,7 @@ const modifier = (text) => {
     // Update turn time based on character count
     if (!timeAdjustedByCommand && state.startingTime !== 'Unknown' && minutesToAdd > 0) {
       state.turnTime = addToTurnTime(state.turnTime, {minutes: minutesToAdd});
-      const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+      const {currentDate, currentTime} = computeCurrent(state.startingDate || '01/01/1900', state.startingTime || 'Unknown', state.turnTime);
       state.currentDate = currentDate;
       state.currentTime = currentTime;
       state.changed = true;

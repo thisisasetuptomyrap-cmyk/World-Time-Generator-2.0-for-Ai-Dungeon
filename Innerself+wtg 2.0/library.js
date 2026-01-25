@@ -520,6 +520,9 @@ function addToTurnTime(tt, add) {
  * @returns {Object} Object with currentDate and currentTime
  */
 function computeCurrent(startingDate, startingTime, tt) {
+  // Defensive: ensure inputs have valid defaults
+  startingDate = startingDate || '01/01/1900';
+  startingTime = startingTime || 'Unknown';
   tt = tt || {years:0, months:0, days:0, hours:0, minutes:0, seconds:0};
   if (startingTime === 'Unknown') {
     let approxDays = (tt.years || 0) * 365 + (tt.months || 0) * 30 + (tt.days || 0);
