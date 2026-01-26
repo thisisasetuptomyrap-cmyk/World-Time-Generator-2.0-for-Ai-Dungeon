@@ -50,10 +50,24 @@ function addToSystemCardCache(title, card) {
 
 /**
  * Get WTG Time Config card (pre-imported by user)
+ * Uses cache first, falls back to direct scan
  * @returns {Object|null} Config card or null
  */
 function getWTGTimeConfigCard() {
-  return getCachedSystemCard("WTG Time Config");
+  // Try cache first
+  const cached = getCachedSystemCard("WTG Time Config");
+  if (cached) return cached;
+
+  // Fallback: direct scan (in case cache missed it)
+  for (let i = 0; i < storyCards.length; i++) {
+    const card = storyCards[i];
+    if (card && card.title === "WTG Time Config") {
+      // Add to cache for future lookups
+      addToSystemCardCache("WTG Time Config", card);
+      return card;
+    }
+  }
+  return null;
 }
 
 /**
@@ -62,11 +76,15 @@ function getWTGTimeConfigCard() {
  */
 function parseWTGTimeConfig() {
   const configCard = getWTGTimeConfigCard();
-  if (!configCard || !configCard.entry) return null;
+  if (!configCard) return null;
 
-  const dateMatch = configCard.entry.match(/Starting Date:\s*(\d{1,2}\/\d{1,2}\/\d{4})/);
-  const timeMatch = configCard.entry.match(/Starting Time:\s*(\d{1,2}:\d{2}\s*[AP]M)/i);
-  const initMatch = configCard.entry.match(/Initialized:\s*(true|false)/i);
+  // AI Dungeon JSON exports use 'value', runtime uses 'entry'
+  const content = configCard.entry || configCard.value;
+  if (!content) return null;
+
+  const dateMatch = content.match(/Starting Date:\s*(\d{1,2}\/\d{1,2}\/\d{4})/);
+  const timeMatch = content.match(/Starting Time:\s*(\d{1,2}:\d{2}\s*[AP]M)/i);
+  const initMatch = content.match(/Initialized:\s*(true|false)/i);
 
   if (!dateMatch || !timeMatch) return null;
 
