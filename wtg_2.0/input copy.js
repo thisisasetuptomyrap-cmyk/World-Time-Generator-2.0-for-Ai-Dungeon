@@ -37,7 +37,8 @@ const modifier = (text) => {
       const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
       state.currentDate = currentDate;
       state.currentTime = currentTime;
-      state.settimeInitialized = true;
+      // Mark settime as initialized (persists marker to WTG Data card)
+      markSettimeAsInitialized();
       state.changed = true;
     }
   }
