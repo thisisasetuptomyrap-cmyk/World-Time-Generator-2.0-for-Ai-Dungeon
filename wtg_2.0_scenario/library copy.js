@@ -1263,7 +1263,7 @@ function getExclusionSet() {
   const card = getWTGExclusionsCard();
   const cacheKey = card?.entry?.length || 0;
 
-  if (!state._exclusionSet || state._exclusionCacheKey !== cacheKey) {
+  if (!state._exclusionSet || state._exclusionCacheKey !== cacheKey || state._exclusionCacheTurn !== info.actionCount) {
     state._exclusionSet = new Set();
     if (card?.entry) {
       const matches = card.entry.matchAll(/\[Exclusion\]\nCard Title: (.*?)\n\[\/Exclusion\]/gs);
@@ -1272,6 +1272,7 @@ function getExclusionSet() {
       }
     }
     state._exclusionCacheKey = cacheKey;
+    state._exclusionCacheTurn = info.actionCount;
   }
   return state._exclusionSet;
 }
@@ -1282,6 +1283,7 @@ function getExclusionSet() {
 function invalidateExclusionCache() {
   delete state._exclusionSet;
   delete state._exclusionCacheKey;
+  delete state._exclusionCacheTurn;
 }
 
 /**
