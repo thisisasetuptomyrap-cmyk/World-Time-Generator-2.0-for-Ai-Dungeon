@@ -39,6 +39,11 @@ const modifier = (text) => {
       state.currentTime = currentTime;
       // Mark settime as initialized (persists marker to WTG Data card)
       markSettimeAsInitialized();
+      // Initialize storycards
+      updateDateTimeCard();
+      getWTGSettingsCard();
+      getCooldownCard();
+      getWTGCommandsCard();
       state.changed = true;
     }
   }
@@ -117,6 +122,11 @@ const modifier = (text) => {
             messages.push(`[SYSTEM] Starting date and time set to ${state.startingDate} ${state.startingTime}. [[${ttMarker}]]`);
             // Mark settime as initialized
             markSettimeAsInitialized();
+            // Initialize storycards
+            updateDateTimeCard();
+            getWTGSettingsCard();
+            getCooldownCard();
+            getWTGCommandsCard();
             state.insertMarker = true;
             state.changed = true;
             // Clear any existing AI command cooldowns when user resets time (Normal mode only)

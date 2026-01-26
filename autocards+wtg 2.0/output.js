@@ -49,6 +49,7 @@ const modifier = (text) => {
       updateDateTimeCard();
       getWTGSettingsCard();
       getCooldownCard();
+      getWTGCommandsCard();
     } else {
       // Fall back: Scan storycards for [settime] commands (limited for performance)
       const maxCards = Math.min(storyCards.length, MAX_STORYCARDS_TO_PROCESS);
@@ -88,6 +89,7 @@ const modifier = (text) => {
               updateDateTimeCard();
               getWTGSettingsCard();
               getCooldownCard();
+              getWTGCommandsCard();
 
               // Remove the [settime] command from the storycard
               card.entry = card.entry.replace(/\[settime\s+\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}\s+.+?\]/i, '').trim();
@@ -103,7 +105,7 @@ const modifier = (text) => {
   }
 
   if (state.startingDate === '01/01/1900' && state.startingTime === 'Unknown') {
-    modifiedText = 'Please switch to story mode and use the command, [settime mm/dd/yyyy time] to set a custom starting date and time. (eg: [settime 01/01/1900 12:00 am])\n\nTo report bugs, message me on discord: thedenial. (it has a period at the end of it). ';
+    modifiedText = ' Please switch to story mode and use the command [settime mm/dd/yyyy time] to set a custom starting date and time. (eg: [settime 01/01/1900 12:00 am])\n\nThis version combines WTG time tracking with AutoCards for automatic storycard generation.\n\nTo report bugs, message me on discord: thedenial. (it has a period at the end of it)';
     return {text: ensureLeadingSpace(modifiedText)};
   }
 
