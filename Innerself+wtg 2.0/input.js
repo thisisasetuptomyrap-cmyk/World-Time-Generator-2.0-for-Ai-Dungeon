@@ -47,7 +47,8 @@ const modifier = (text) => {
     }
 
     // Auto-initialize with IRL time if user takes action without [settime]
-    if (state.startingDate === '01/01/1900' && !state.settimeInitialized) {
+    // Only trigger after initial message has been shown (prevents triggering on opening prompt)
+    if (state.startingDate === '01/01/1900' && !state.settimeInitialized && state.initialMessageShown) {
       // Check if this is NOT a command (doesn't start with [something])
       const trimmedText = text.trim();
       if (!trimmedText.match(/^\[.+?\]/)) {
