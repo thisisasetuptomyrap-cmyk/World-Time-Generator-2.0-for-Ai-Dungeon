@@ -31,6 +31,22 @@ const modifier = (text) => {
     }
   }
 
+  // Check for WTG Time Config card to initialize state before processing commands
+  // This must happen in input.js because commands like [advance] run before output.js
+  if (state.startingDate === '01/01/1900' && !state.settimeInitialized) {
+    const timeConfig = parseWTGTimeConfig();
+    if (timeConfig && timeConfig.initialized) {
+      state.startingDate = timeConfig.startingDate;
+      state.startingTime = timeConfig.startingTime;
+      state.turnTime = {years:0, months:0, days:0, hours:0, minutes:0, seconds:0};
+      const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+      state.currentDate = currentDate;
+      state.currentTime = currentTime;
+      state.settimeInitialized = true;
+      state.changed = true;
+    }
+  }
+
   state.changed = state.changed || false;
   state.insertMarker = false;
 
