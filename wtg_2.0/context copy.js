@@ -8,6 +8,11 @@ const modifier = (text) => {
   // Ensure state.turnTime is always initialized
   state.turnTime = state.turnTime || {years:0, months:0, days:0, hours:0, minutes:0, seconds:0};
 
+  // Initialize mode to normal (full version always uses normal mode)
+  if (!state.wtgMode) {
+    state.wtgMode = 'normal';
+  }
+
   // Get turn data from WTG Data storycard
   const turnData = getTurnData();
   
@@ -94,7 +99,7 @@ const modifier = (text) => {
   // Check if a command (advance/sleep) just modified turnTime - if so, skip recalculation
   // The modified input isn't in history yet, so we'd incorrectly overwrite the command's value
   const skipTimeRecalc = state.turnTimeModifiedByCommand;
-  delete state.turnTimeModifiedByCommand;
+  // Don't delete flag here - output.js also needs to check it
 
   // Get character count from history for time adjustment
   const {lastTT, charsAfter, found: markerFound} = getLastTurnTimeAndChars(history);
