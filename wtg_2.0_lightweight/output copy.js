@@ -133,7 +133,7 @@ const modifier = (text) => {
 
   // If settime has NOT been initialized and we're at the start, inject the prompt
   if (!hasSettimeBeenInitialized() && state.startingDate === '01/01/1900' && state.startingTime === 'Unknown') {
-    modifiedText = ' Please switch to story mode and use the command [settime mm/dd/yyyy time] to set a custom starting date and time. (eg: [settime 01/01/1900 12:00 am])\n\nThis is the LIGHTWEIGHT version - simple time tracking without AI prompt injection.\n\nTo report bugs, message me on discord: thedenial. (it has a period at the end of it)';
+    modifiedText = ' Use [settime mm/dd/yyyy time] to set a custom starting date and time, or just take any action to auto-initialize with the current real-world time.\n\nThis is the LIGHTWEIGHT version - simple time tracking without AI prompt injection.\n\nTo report bugs, message me on discord: thedenial. (it has a period at the end of it)';
     return {text: ensureLeadingSpace(modifiedText)};
   }
 

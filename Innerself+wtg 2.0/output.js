@@ -115,7 +115,7 @@ const modifier = (text) => {
 
   // If settime has NOT been initialized and we're at the start, show setup prompt
   if (!hasSettimeBeenInitialized() && state.startingDate === '01/01/1900' && state.startingTime === 'Unknown') {
-    return { text: ' Please switch to story mode and use the command [settime mm/dd/yyyy time] to set a custom starting date and time. (eg: [settime 01/01/1900 12:00 am])\n\nThis version combines WTG time tracking with Inner Self for NPC memory and behavior.\n\nTo report bugs, message me on discord: thedenial. (it has a period at the end of it)' };
+    return { text: ' Use [settime mm/dd/yyyy time] to set a custom starting date and time, or just take any action to auto-initialize with the current real-world time.\n\nThis version combines WTG time tracking with Inner Self for NPC memory and behavior.\n\nTo report bugs, message me on discord: thedenial. (it has a period at the end of it)' };
   }
 
   // Normal processing

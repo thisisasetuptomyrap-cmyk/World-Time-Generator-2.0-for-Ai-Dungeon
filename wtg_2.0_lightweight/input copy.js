@@ -48,6 +48,18 @@ const modifier = (text) => {
     }
   }
 
+  // Auto-initialize with IRL time if user takes action without [settime]
+  if (state.startingDate === '01/01/1900' && !state.settimeInitialized) {
+    // Check if this is NOT a command (doesn't start with [something])
+    const trimmedText = text.trim();
+    if (!trimmedText.match(/^\[.+?\]/)) {
+      // User is doing a regular action without having set time - auto-inject IRL time
+      const irlDate = new Date().toLocaleDateString('en-US');
+      const irlTime = new Date().toLocaleTimeString('en-US').toLowerCase();
+      text = `[settime ${irlDate} ${irlTime}]\n${text}`;
+    }
+  }
+
   state.changed = state.changed || false;
   state.insertMarker = false;
 
