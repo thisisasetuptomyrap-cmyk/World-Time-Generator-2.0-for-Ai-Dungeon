@@ -57,9 +57,7 @@ const modifier = (text) => {
       const commandStr = match[1].trim().toLowerCase();
       const parts = commandStr.split(/\s+/);
       const command = parts[0];
-
-      log("Match:" + bracketedCommand);
-    
+      
       if (command === 'light') {
         // Switch to lightweight mode
         state.wtgMode = 'lightweight';

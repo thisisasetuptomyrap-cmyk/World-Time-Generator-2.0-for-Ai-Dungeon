@@ -35,46 +35,22 @@ const modifier = (text) => {
   state.sleepWakeTime = state.sleepWakeTime || null;
   state.advanceEndTime = state.advanceEndTime || null;
 
+  // Handle bracketed commands
   let modifiedText = text;
   let messages = [];
-
-  // Check if user action is [sleep] command to trigger sleep
-  if (text.trim().toLowerCase() === '[sleep]') {
-    if (state.currentTime !== 'Unknown' && /\d/.test(state.currentTime)) {
-      let sleepHours = Math.floor(Math.random() * 3) + 6;
-      let sleepMinutes = Math.floor(Math.random() * 60);
-      let add = {hours: sleepHours, minutes: sleepMinutes};
-      state.turnTime = addToTurnTime(state.turnTime, add);
-      const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
-      state.currentDate = currentDate;
-      state.currentTime = currentTime;
-      let wakeMessage = (add.days > 0 || state.turnTime.days > 0) ? "the next day" : "later that day";
-      const ttMarker = formatTurnTime(state.turnTime);
-      messages.push(`[SYSTEM] You go to sleep and wake up ${wakeMessage} on ${state.currentDate} at ${state.currentTime}. [[${ttMarker}]]`);
-    } else {
-      // When time is Unknown, set it to 8:00 AM and reset turn time
-      state.turnTime = {years:0, months:0, days:0, hours:0, minutes:0, seconds:0};
-      state.turnTime = addToTurnTime(state.turnTime, {days: 1});
-      state.startingTime = "8:00 AM";
-      const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
-      state.currentDate = currentDate;
-      state.currentTime = currentTime;
-      const ttMarker = formatTurnTime(state.turnTime);
-      messages.push(`[SYSTEM] You go to sleep and wake up the next morning on ${state.currentDate} at ${state.currentTime}. [[${ttMarker}]]`);
-    }
-    state.insertMarker = true;
-    state.changed = true;
-    // Set sleep cooldown to prevent AI from sleeping again for 8 hours
-    setSleepCooldown({hours: 8});
-    modifiedText = '';
-  }
-  // Handle bracketed commands
-  else {
-    let trimmedText = text.trim();
-    if (trimmedText.match(/^\[(.+?)\]$/)) {
-      const commandStr = trimmedText.match(/^\[(.+?)\]$/)[1].trim().toLowerCase();
+  let trimmedText = text.trim();
+  // Check for one or more bracketed commands
+  const commandRegex = /\[([^\]]+)\]/g;
+  const commandMatches = [...trimmedText.matchAll(commandRegex)];
+    
+  if (commandMatches.length > 0) {
+    // Process each command in sequence
+    for (const match of commandMatches) {
+      const bracketedCommand = match[0];
+      const commandStr = match[1].trim().toLowerCase();
       const parts = commandStr.split(/\s+/);
       const command = parts[0];
+
       if (command === 'settime') {
         let dateStr = parts[1];
         let timeStr = parts.slice(2).join(' ');
@@ -102,6 +78,7 @@ const modifier = (text) => {
 
             const ttMarker = formatTurnTime(state.turnTime);
             messages.push(`[SYSTEM] Starting date and time set to ${state.startingDate} ${state.startingTime}. [[${ttMarker}]]`);
+            modifiedText = modifiedText.replace(bracketedCommand, '');
             // Mark settime as initialized
             markSettimeAsInitialized();
             state.insertMarker = true;
@@ -140,12 +117,41 @@ const modifier = (text) => {
           state.currentTime = currentTime;
           const ttMarker = formatTurnTime(state.turnTime);
           messages.push(`[SYSTEM] Advanced ${amount} ${unit}${extraMinutes ? ` and ${extraMinutes} minutes` : ''}. New date/time: ${state.currentDate} ${state.currentTime}. [[${ttMarker}]]`);
+          modifiedText = modifiedText.replace(bracketedCommand, '');
           state.insertMarker = true;
           state.changed = true;
           // Set advance cooldown to prevent AI from advancing again for 5 minutes
           setAdvanceCooldown({minutes: 5});
         }
-      } else if (command === 'reset') {
+      } else if (command === 'sleep') {
+        if (state.currentTime !== 'Unknown' && /\d/.test(state.currentTime)) {
+          let sleepHours = Math.floor(Math.random() * 3) + 6;
+          let sleepMinutes = Math.floor(Math.random() * 60);
+          let add = {hours: sleepHours, minutes: sleepMinutes};
+          state.turnTime = addToTurnTime(state.turnTime, add);
+          const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+          state.currentDate = currentDate;
+          state.currentTime = currentTime;
+          let wakeMessage = (add.days > 0 || state.turnTime.days > 0) ? "the next day" : "later that day";
+          const ttMarker = formatTurnTime(state.turnTime);
+          messages.push(`[SYSTEM] You go to sleep and wake up ${wakeMessage} on ${state.currentDate} at ${state.currentTime}. [[${ttMarker}]]`);
+        } else {
+          // When time is Unknown, set it to 8:00 AM and reset turn time
+          state.turnTime = {years:0, months:0, days:0, hours:0, minutes:0, seconds:0};
+          state.turnTime = addToTurnTime(state.turnTime, {days: 1});
+          state.startingTime = "8:00 AM";
+          const {currentDate, currentTime} = computeCurrent(state.startingDate, state.startingTime, state.turnTime);
+          state.currentDate = currentDate;
+          state.currentTime = currentTime;
+          const ttMarker = formatTurnTime(state.turnTime);
+          messages.push(`[SYSTEM] You go to sleep and wake up the next morning on ${state.currentDate} at ${state.currentTime}. [[${ttMarker}]]`);
+        }
+        state.insertMarker = true;
+        state.changed = true;
+        // Set sleep cooldown to prevent AI from sleeping again for 8 hours
+        setSleepCooldown({hours: 8});
+        modifiedText = modifiedText.replace(bracketedCommand, '');
+      }else if (command === 'reset') {
         let newDate = getCurrentDateFromHistory('', true);
         let newTime = getCurrentTimeFromHistory('', true);
         let valid = false;
@@ -171,6 +177,7 @@ const modifier = (text) => {
         if (valid) {
           const ttMarker = formatTurnTime(state.turnTime);
           messages.push(`[SYSTEM] Date and time reset to most recent mention: ${state.currentDate} ${state.currentTime}. [[${ttMarker}]]`);
+          modifiedText = modifiedText.replace(bracketedCommand, '');
           state.insertMarker = true;
           state.changed = true;
           // Clear any existing AI command cooldowns when user resets time
@@ -178,16 +185,14 @@ const modifier = (text) => {
         } else {
           messages.push(`[No date or time mentions found in history.]`);
         }
-      } else {
-        messages.push('[Invalid command. Available: settime, advance, reset, sleep.]');
-      }
-      modifiedText = '';
+      } 
+      messages.unshift(modifiedText);
     }
   }
 
   // Add messages to modified text
   if (messages.length > 0) {
-    modifiedText = messages.join('\n') + (modifiedText ? '\n' + modifiedText : '');
+    modifiedText = messages.join('\n');
   }
 
   // Process entity markers in player input (always enabled)
