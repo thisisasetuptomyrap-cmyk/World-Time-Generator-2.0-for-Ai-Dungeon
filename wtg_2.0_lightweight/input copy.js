@@ -75,6 +75,8 @@ const modifier = (text) => {
     }
       state.insertMarker = true;
       state.changed = true;
+      // Flag to prevent context.js from overwriting turnTime (marker isn't in history yet)
+      state.turnTimeModifiedByCommand = true;
       setSleepCooldown({hours: 8});
       modifiedText = '';
     }
@@ -149,6 +151,8 @@ const modifier = (text) => {
           messages.push(`[SYSTEM] Advanced ${amount} ${unit}. New date/time: ${state.currentDate} ${state.currentTime}. [[${ttMarker}]]`);
           state.insertMarker = true;
           state.changed = true;
+          // Flag to prevent context.js from overwriting turnTime (marker isn't in history yet)
+          state.turnTimeModifiedByCommand = true;
           setAdvanceCooldown({minutes: 5});
         }
       } else if (command === 'reset') {
