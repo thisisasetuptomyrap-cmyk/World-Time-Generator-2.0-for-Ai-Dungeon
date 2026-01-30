@@ -159,9 +159,16 @@ ${sleepInstruction} ${advanceInstruction}
   }
 
   // ========== INNER-SELF CONTEXT PROCESSING ==========
+  // InnerSelf modifies the global 'text' variable directly
+  // We need to set global text to our modified text, let InnerSelf process it,
+  // then return the modified global text
+  text = modifiedText;
   InnerSelf("context");
+  // InnerSelf may have modified global 'text' with brain content
+  // Use the global text if it was modified, otherwise keep our modifiedText
+  const finalText = (text && text !== modifiedText) ? text : modifiedText;
 
-  return { text: modifiedText, stop };
+  return { text: finalText, stop };
 };
 
 modifier(text);
